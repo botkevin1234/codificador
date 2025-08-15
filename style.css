@@ -1,0 +1,63 @@
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('fundo.jpeg'); /* Imagem de fundo padrão */
+    background-size: cover;
+    background-position: center;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+    color: lch(100% 0.01 296.81);
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+#controls {
+    margin-bottom: 15px;
+    background-color: rgba(0,0,0,0.6);
+    padding: 15px;
+    border-radius: 15px;
+    display: inline-block;
+}
+
+textarea {
+    width: 300px;
+    height: 80px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 2px solid hsl(0, 2%, 35%);
+    padding: 8px;
+    resize: none;
+}
+
+button {
+    background-color: hsl(172, 72%, 60%);
+    border: none;
+    color: #443d3d;
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: hsl(177, 52%, 32%);
+    transform: scale(1.05);
+}
+
+#canvasContainer {
+    margin-top: 20px;
+    display: inline-block;
+    padding: 10px;
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 15px;
+}
+
+canvas {
+    border: 2px solid #414040;
+    background-color: rgb(121, 121, 121);
+    border-radius: 10px;
+}
