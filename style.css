@@ -1,63 +1,52 @@
+/* Fonte personalizada */
+@font-face {
+    font-family: 'MinhaFonte';
+    src: url('minhaFonte.ttf') format('truetype');
+}
+
+/* Background da página */
 body {
     font-family: Arial, sans-serif;
-    background-image: url('fundo.jpeg'); /* Imagem de fundo padrão */
+    text-align: center;
+    padding: 20px;
+    background-image: url('fundo.jpeg'); /* Substitua pelo caminho da sua imagem */
     background-size: cover;
     background-position: center;
-    margin: 0;
-    padding: 20px;
-    text-align: center;
-    color: lch(100% 0.01 296.81);
+    background-repeat: no-repeat;
+    color: hsl(0, 0%, 82%); /* Ajuste contraste com a imagem de fundo */
 }
 
-h2 {
-    margin-bottom: 20px;
+/* Canvas */
+canvas {
+    border: 2px solid hsl(0, 0%, 61%);
+    cursor: grab;
+    margin-top: 15px;
 }
 
-#controls {
-    margin-bottom: 15px;
-    background-color: rgba(0,0,0,0.6);
-    padding: 15px;
-    border-radius: 15px;
-    display: inline-block;
+/* Controles */
+.controls input, 
+.controls button, 
+.controls textarea {
+    margin: 3px;
+    padding: 8px;
 }
 
 textarea {
     width: 300px;
     height: 80px;
-    font-size: 16px;
-    border-radius: 10px;
-    border: 2px solid hsl(0, 2%, 35%);
-    padding: 8px;
-    resize: none;
 }
 
+/* Ajustar botões para melhor visual */
 button {
-    background-color: hsl(172, 72%, 60%);
+    border-radius: 8px;
     border: none;
-    color: #443d3d;
-    padding: 10px 20px;
-    margin: 5px;
-    font-size: 16px;
-    border-radius: 25px;
+    background-color: #ff5555;
+    color: white;
+    font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: 0.2s;
 }
 
 button:hover {
-    background-color: hsl(177, 52%, 32%);
-    transform: scale(1.05);
-}
-
-#canvasContainer {
-    margin-top: 20px;
-    display: inline-block;
-    padding: 10px;
-    background-color: rgba(0,0,0,0.5);
-    border-radius: 15px;
-}
-
-canvas {
-    border: 2px solid #414040;
-    background-color: rgb(121, 121, 121);
-    border-radius: 10px;
+    background-color: #ff2222;
 }
