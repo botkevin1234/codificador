@@ -13,8 +13,8 @@ const saveBtn = document.getElementById('saveImage');
 
 let img = new Image();
 let text = "";
-let x = 400;
-let y = 250;
+let x = 0;
+let y = 0;
 let dragging = false;
 let offsetX, offsetY;
 let rotation = 0;
@@ -22,31 +22,25 @@ let flipH = false;
 let flipV = false;
 let scale = 1;
 const maxWidth = 500;
+let mouseX = 0, mouseY = 0;
 
 // Carregar a fonte personalizada
 let fonteCarregada = false;
 const minhaFonte = new FontFace('MinhaFonte', 'url(minhaFonte.ttf)');
-minhaFonte.load().then(f => {
-    document.fonts.add(f);
-    fonteCarregada = true;
+minhaFonte.load().then(f => { 
+    document.fonts.add(f); 
+    fonteCarregada = true; 
 });
 
-// Função de tradução
+// Tradução
 function traduzirSimbolos(texto){
-    const mapa = {
-        "A":"A","B":"B","C":"C","D":"D","E":"E","F":"F","G":"G","H":"H","I":"I","J":"J",
-        "K":"K","L":"Λ","M":"M","N":"N","O":"O","P":"P","Q":"Q","R":"R","S":"S","T":"T",
-        "U":"Y","V":"V","W":"W","X":"X","Y":"Y","Z":"Z",
-        "a":"a","b":"b","c":"c","d":"d","e":"e","f":"f","g":"g","h":"h","i":"i","j":"j",
-        "k":"k","l":"l","m":"m","n":"n","o":"o","p":"p","q":"q","r":"r","s":"s","t":"t",
-        "u":"u","v":"v","w":"w","x":"x","y":"y","z":"z",
-        "á":"á","à":"à","ã":"ã","â":"â","é":"é","ê":"ê","í":"í","ó":"ó","ô":"ô","õ":"õ",
-        "ú":"ú","ü":"ü","ç":"ç"
-    };
+    const mapa = { "A":"A","B":"B","C":"C","D":"D","E":"E","F":"F","G":"G","H":"H","I":"I","J":"J",
+                   "K":"K","L":"L","M":"M","N":"N","O":"O","P":"P","Q":"Q","R":"R","S":"S","T":"T",
+                   "U":"U","V":"V","W":"W","X":"X","Y":"Y","Z":"Z"};
     return texto.split("").map(l => mapa[l] || l).join("");
 }
 
-// Atualizar texto automaticamente
+// Atualizar texto
 portugueseText.addEventListener('input', function(){
     const lines = this.value.split('\n');
     const translatedLines = lines.map(line => traduzirSimbolos(line));
@@ -54,7 +48,20 @@ portugueseText.addEventListener('input', function(){
     drawCanvas();
 });
 
-// Desenhar canvas
+// Ajustar canvas responsivo
+function ajustarCanvas() {
+    canvas.width = window.innerWidth * 0.9;
+    canvas.height = window.innerHeight * 0.5;
+    if(x === 0 && y === 0){
+        x = canvas.width/2;
+        y = canvas.height/2;
+    }
+    drawCanvas();
+}
+window.addEventListener('resize', ajustarCanvas);
+ajustarCanvas();
+
+// Desenhar canvas com contorno do texto
 function drawCanvas() {
     if(!fonteCarregada) return;
     ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -67,12 +74,21 @@ function drawCanvas() {
         ctx.scale(flipH?-1:1, flipV?-1:1);
         ctx.fillStyle = colorPicker.value;
         ctx.font = `${fontSizeInput.value}px MinhaFonte`;
+
+        // contorno
+        if(isInsideText(mouseX, mouseY) && !dragging){
+            const bounds = getTextBounds();
+            ctx.strokeStyle = 'hsla(172, 98%, 63%, 0.2)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 0, bounds.width, bounds.height);
+        }
+
         drawMultilineText(ctx, text, 0, 0, maxWidth, parseInt(fontSizeInput.value)+6);
         ctx.restore();
     }
 }
 
-// Quebra de linhas
+// Multiline
 function drawMultilineText(ctx, text, x, y, maxWidth, lineHeight){
     const lines = text.split('\n');
     let startY = y;
@@ -86,16 +102,40 @@ function drawMultilineText(ctx, text, x, y, maxWidth, lineHeight){
                 ctx.fillText(lineBuffer, x, startY);
                 lineBuffer = words[i] + ' ';
                 startY += lineHeight;
-            } else {
-                lineBuffer = testLine;
-            }
+            } else lineBuffer = testLine;
         }
         ctx.fillText(lineBuffer, x, startY);
         startY += lineHeight;
     });
 }
 
-// Carregar imagem do usuário
+// Bounds
+function getTextBounds(){
+    ctx.save();
+    ctx.font=`${fontSizeInput.value}px MinhaFonte`;
+    const lines = text.split('\n');
+    let maxWidthLine = 0;
+    const lineHeight = parseInt(fontSizeInput.value)+6;
+    let totalHeight = 0;
+    lines.forEach(line => {
+        let words = line.split(' ');
+        let lineBuffer = '';
+        for(let i=0;i<words.length;i++){
+            const testLine = lineBuffer + words[i] + ' ';
+            const metrics = ctx.measureText(testLine);
+            if(metrics.width>maxWidth && i>0){
+                lineBuffer = words[i] + ' ';
+                totalHeight += lineHeight;
+            } else lineBuffer = testLine;
+        }
+        maxWidthLine = Math.max(maxWidthLine, ctx.measureText(lineBuffer).width);
+        totalHeight += lineHeight;
+    });
+    ctx.restore();
+    return {width:maxWidthLine*scale, height:totalHeight*scale};
+}
+
+// Upload imagem
 uploadImage.addEventListener('change',function(e){
     const reader=new FileReader();
     reader.onload=function(event){
@@ -120,62 +160,38 @@ saveBtn.addEventListener('click',function(){
 });
 
 // Arrastar texto
-function getTextBounds(){
-    ctx.save();
-    ctx.font=`${fontSizeInput.value}px MinhaFonte`;
-    const lines = text.split('\n');
-    let maxWidthLine = 0;
-    const lineHeight = parseInt(fontSizeInput.value)+6;
-    let totalHeight = 0;
-    lines.forEach(line => {
-        let words = line.split(' ');
-        let lineBuffer = '';
-        let lineWidth = 0;
-        for(let i=0; i<words.length; i++){
-            const testLine = lineBuffer + words[i] + ' ';
-            const metrics = ctx.measureText(testLine);
-            if(metrics.width>maxWidth && i>0){
-                lineWidth = Math.max(lineWidth, ctx.measureText(lineBuffer).width);
-                lineBuffer = words[i] + ' ';
-                totalHeight += lineHeight;
-            } else {
-                lineBuffer = testLine;
-            }
-        }
-        lineWidth = Math.max(lineWidth, ctx.measureText(lineBuffer).width);
-        maxWidthLine = Math.max(maxWidthLine, lineWidth);
-        totalHeight += lineHeight;
-    });
-    ctx.restore();
-    return {width:maxWidthLine*scale, height:totalHeight*scale};
-}
-
-function isInsideText(mouseX,mouseY){
+function isInsideText(mx,my){
     const bounds = getTextBounds();
-    const dx = mouseX - x;
-    const dy = mouseY - y;
+    const dx = mx - x;
+    const dy = my - y;
     const rad = -rotation*Math.PI/180;
     const rotatedX = dx*Math.cos(rad)-dy*Math.sin(rad);
     const rotatedY = dx*Math.sin(rad)+dy*Math.cos(rad);
     return rotatedX>=0 && rotatedX<=bounds.width && rotatedY>=0 && rotatedY<=bounds.height;
 }
 
-canvas.addEventListener('mousedown',function(e){
-    if(isInsideText(e.offsetX,e.offsetY)){
-        dragging=true;
-        offsetX=e.offsetX-x;
-        offsetY=e.offsetY-y;
-    }
-});
-canvas.addEventListener('mousemove',function(e){
+canvas.addEventListener('mousemove', function(e){
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
     if(dragging){
-        x=e.offsetX-offsetX;
-        y=e.offsetY-offsetY;
+        x = mouseX - offsetX;
+        y = mouseY - offsetY;
+        drawCanvas();
+    } else {
         drawCanvas();
     }
 });
-canvas.addEventListener('mouseup',function(){dragging=false;});
-canvas.addEventListener('mouseleave',function(){dragging=false;});
+
+canvas.addEventListener('mousedown', function(e){
+    if(isInsideText(mouseX, mouseY)){
+        dragging=true;
+        offsetX=mouseX-x;
+        offsetY=mouseY-y;
+    }
+});
+canvas.addEventListener('mouseup', function(){ dragging=false; });
+canvas.addEventListener('mouseleave', function(){ dragging=false; });
 
 // Primeira renderização
 drawCanvas();
