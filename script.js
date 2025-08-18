@@ -29,12 +29,15 @@ let img = new Image();
 let hasImage = false;
 let useBlank = false;
 
+// imagem desenhada centralizada
 let zoom = 1;
 const zoomStep = 0.1, minZoom = 0.1, maxZoom = 5;
 
+// texto e transformações
 let text = "", x = 0, y = 0, rotation = 0, flipH = false, flipV = false;
 let draggingText = false, offsetX = 0, offsetY = 0;
 
+// fonte personalizada
 let fonteCarregada = false;
 const minhaFonte = new FontFace('MinhaFonte', 'url(minhaFonte.ttf)');
 minhaFonte.load().then(f => {
@@ -43,12 +46,14 @@ minhaFonte.load().then(f => {
   drawCanvas();
 });
 
+// alternar modo
 modeSelect.addEventListener('change', () => {
   const isUpload = modeSelect.value === 'upload';
   uploadSection.style.display = isUpload ? 'block' : 'none';
   blankSection.style.display = isUpload ? 'none' : 'block';
 });
 
+// criar canvas transparente
 createBlankBtn.addEventListener('click', () => {
   const w = Math.max(200, parseInt(blankWidthInput.value) || 1920);
   const h = Math.max(200, parseInt(blankHeightInput.value) || 1080);
@@ -56,12 +61,14 @@ createBlankBtn.addEventListener('click', () => {
   hasImage = false;
   img = new Image();
   zoom = 1;
+
   setCanvasSize(w, h);
   x = canvas.width / 2;
   y = canvas.height / 2;
   drawCanvas();
 });
 
+// upload de imagem
 uploadImage.addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -82,11 +89,13 @@ uploadImage.addEventListener('change', e => {
   reader.readAsDataURL(file);
 });
 
+// util: ajustar tamanho interno do canvas (mantém nitidez)
 function setCanvasSize(w, h) {
   canvas.width = w;
   canvas.height = h;
 }
 
+// tradução de símbolos
 function traduzirSimbolos(txt) {
   const mapa = {
     "A":"A","B":"B","C":"C","D":"D","E":"E","F":"F","G":"G","H":"H","I":"I","J":"J",
@@ -97,10 +106,12 @@ function traduzirSimbolos(txt) {
 }
 
 portugueseText.addEventListener('input', () => {
-  text = portugueseText.value.split('\n').map(l => traduzirSimbolos(l)).join('\n');
+  const lines = portugueseText.value.split('\n');
+  text = lines.map(l => traduzirSimbolos(l)).join('\n');
   drawCanvas();
 });
 
+// desenhar
 function drawCanvas() {
   if (!fonteCarregada) return;
 
@@ -108,6 +119,7 @@ function drawCanvas() {
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
 
+  // imagem
   let imgX = 0, imgY = 0, drawW = 0, drawH = 0;
   if (hasImage && img.src) {
     drawW = img.width * zoom;
@@ -117,6 +129,7 @@ function drawCanvas() {
     ctx.drawImage(img, imgX, imgY, drawW, drawH);
   }
 
+  // texto
   if (text) {
     ctx.save();
     ctx.translate(x, y);
@@ -126,14 +139,17 @@ function drawCanvas() {
     ctx.font = `${parseInt(fontSizeInput.value)}px MinhaFonte`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+
     const padding = 12;
     const usableW = hasImage ? Math.max(0, (img.width * zoom) - padding * 2) : Math.max(0, canvas.width - padding * 2);
     drawMultilineWrapped(ctx, text, usableW, parseInt(fontSizeInput.value) + 8);
     ctx.restore();
+
     keepTextInsideBounds(imgX, imgY, drawW, drawH);
   }
 }
 
+// quebra de linha
 function drawMultilineWrapped(ctx, text, maxWidth, lineHeight) {
   const paragraphs = text.split('\n');
   const lines = [];
@@ -154,9 +170,13 @@ function drawMultilineWrapped(ctx, text, maxWidth, lineHeight) {
 
   const totalH = lines.length * lineHeight;
   let yy = -totalH / 2 + lineHeight / 2;
-  lines.forEach(l => { ctx.fillText(l, 0, yy); yy += lineHeight; });
+  lines.forEach(l => {
+    ctx.fillText(l, 0, yy);
+    yy += lineHeight;
+  });
 }
 
+// medir bounds do texto
 function measureTextBounds(ctx, text, maxWidth, lineHeight) {
   const prevFont = ctx.font;
   ctx.font = `${parseInt(fontSizeInput.value)}px MinhaFonte`;
@@ -171,7 +191,7 @@ function measureTextBounds(ctx, text, maxWidth, lineHeight) {
         maxLineW = Math.max(maxLineW, ctx.measureText(line).width);
         numLines++;
         line = word + ' ';
-      } else { line = test + ' '; }
+      } else line = test + ' ';
     });
     maxLineW = Math.max(maxLineW, ctx.measureText(line).width);
     numLines++;
@@ -180,31 +200,37 @@ function measureTextBounds(ctx, text, maxWidth, lineHeight) {
   return { width: maxLineW, height: numLines * lineHeight };
 }
 
+// manter texto dentro da imagem
 function keepTextInsideBounds(imgX, imgY, drawW, drawH) {
   const padding = 12;
   const lineHeight = parseInt(fontSizeInput.value) + 8;
   const usableW = hasImage ? Math.max(0, (img.width * zoom) - padding * 2) : Math.max(0, canvas.width - padding * 2);
   const b = measureTextBounds(ctx, text, usableW, lineHeight);
+
   const halfW = b.width / 2;
   const halfH = b.height / 2;
   const left = hasImage ? (imgX + padding) : padding;
   const top = hasImage ? (imgY + padding) : padding;
   const right = hasImage ? (imgX + drawW - padding) : (canvas.width - padding);
   const bottom = hasImage ? (imgY + drawH - padding) : (canvas.height - padding);
+
   x = Math.max(left + halfW, Math.min(x, right - halfW));
-  y = Math.max(top + halfH, Math.min(y, bottom));
+  y = Math.max(top + halfH, Math.min(y, bottom - halfH));
 }
 
+// checar se ponto está no texto
 function pointInText(mx, my) {
   const padding = 12;
   const lineHeight = parseInt(fontSizeInput.value) + 8;
   const usableW = hasImage ? Math.max(0, (img.width * zoom) - padding * 2) : Math.max(0, canvas.width - padding * 2);
   const b = measureTextBounds(ctx, text, usableW, lineHeight);
+
   const dx = mx - x;
   const dy = my - y;
   const rad = -rotation * Math.PI / 180;
   const rx = dx * Math.cos(rad) - dy * Math.sin(rad);
   const ry = dx * Math.sin(rad) + dy * Math.cos(rad);
+
   return (rx >= -b.width/2 && rx <= b.width/2 && ry >= -b.height/2 && ry <= b.height/2);
 }
 
@@ -231,43 +257,44 @@ function moveDrag(clientX, clientY) {
 
 function endDrag() { draggingText = false; }
 
+// eventos mouse
 canvas.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
 canvas.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
 canvas.addEventListener('mouseup', endDrag);
 canvas.addEventListener('mouseleave', endDrag);
 
+// eventos touch
 canvas.addEventListener('touchstart', e => {
-  if (e.touches.length > 0) {
-    const t = e.touches[0];
-    startDrag(t.clientX, t.clientY);
-    e.preventDefault();
-  }
+  const t = e.touches[0];
+  startDrag(t.clientX, t.clientY);
+  e.preventDefault();
 }, { passive: false });
 
 canvas.addEventListener('touchmove', e => {
-  if (e.touches.length > 0) {
-    const t = e.touches[0];
-    moveDrag(t.clientX, t.clientY);
-    e.preventDefault();
-  }
+  const t = e.touches[0];
+  moveDrag(t.clientX, t.clientY);
+  e.preventDefault();
 }, { passive: false });
 
 canvas.addEventListener('touchend', endDrag);
 
-// botões
+// botões e inputs
 flipHBtn.addEventListener('click', () => { flipH = !flipH; drawCanvas(); });
 flipVBtn.addEventListener('click', () => { flipV = !flipV; drawCanvas(); });
 clearTextBtn.addEventListener('click', () => { text = ""; portugueseText.value = ""; drawCanvas(); });
 rotationInput.addEventListener('input', () => { rotation = parseFloat(rotationInput.value) || 0; drawCanvas(); });
 fontSizeInput.addEventListener('input', drawCanvas);
 colorPicker.addEventListener('input', drawCanvas);
+
 zoomInBtn.addEventListener('click', () => { zoom = Math.min(maxZoom, zoom + zoomStep); drawCanvas(); });
 zoomOutBtn.addEventListener('click', () => { zoom = Math.max(minZoom, zoom - zoomStep); drawCanvas(); });
 
+// exportação
 saveBtn.addEventListener('click', () => {
   const outW = Math.max(256, parseInt(exportWidth.value) || 3840);
   const outH = Math.max(256, parseInt(exportHeight.value) || 2160);
   const transparent = !!exportTransparent.checked;
+
   const out = document.createElement('canvas');
   out.width = outW;
   out.height = outH;
@@ -275,7 +302,11 @@ saveBtn.addEventListener('click', () => {
   octx.imageSmoothingEnabled = true;
   octx.imageSmoothingQuality = 'high';
 
-  if (!transparent) { octx.fillStyle = '#ffffff'; octx.fillRect(0, 0, outW, outH); }
+  if (!transparent) {
+    octx.fillStyle = '#ffffff';
+    octx.fillRect(0, 0, outW, outH);
+  }
+
   const sx = outW / canvas.width;
   const sy = outH / canvas.height;
 
@@ -312,6 +343,7 @@ saveBtn.addEventListener('click', () => {
   link.click();
 });
 
+// primeira renderização
 setCanvasSize(1280, 720);
 x = canvas.width / 2;
 y = canvas.height / 2;
