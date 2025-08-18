@@ -53,13 +53,13 @@ button:hover { background-color: #005fcc; }
   width: 100%;
   overflow: auto;
   text-align: center;
-  margin-top: 20px;
 }
 
 canvas {
   display: inline-block;
   max-width: 100%;
   height: auto;
+  margin: 20px auto;
   border: 1px solid #ccc;
   border-radius: 6px;
   cursor: grab;
