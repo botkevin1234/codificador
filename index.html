@@ -15,58 +15,65 @@
 <h2>Codificador🔒</h2>
 
 <div class="controls">
-  <label>Modo:</label>
-  <select id="modeSelect">
-    <option value="upload" selected>Enviar Imagem</option>
-    <option value="blank">Imagem sem Fundo</option>
-  </select>
+  <fieldset>
+    <legend>Modo</legend>
+    <label for="modeSelect">Selecione o modo:</label>
+    <select id="modeSelect">
+      <option value="upload" selected>Enviar Imagem</option>
+      <option value="blank">Imagem sem Fundo</option>
+    </select>
 
-  <div id="uploadSection">
-    <input type="file" id="uploadImage" accept="image/*">
-  </div>
+    <div id="uploadSection">
+      <label for="uploadImage">Enviar Imagem:</label>
+      <input type="file" id="uploadImage" accept="image/*">
+    </div>
 
-  <div id="blankSection" style="display:none;">
-    <label>Largura:</label>
-    <input type="number" id="blankWidth" value="1920" min="200">
-    <label>Altura:</label>
-    <input type="number" id="blankHeight" value="1080" min="200">
-    <button id="createBlank">Criar Canvas Transparente</button>
-  </div>
+    <div id="blankSection" style="display:none;">
+      <label for="blankWidth">Largura:</label>
+      <input type="number" id="blankWidth" value="1920" min="200">
+      <label for="blankHeight">Altura:</label>
+      <input type="number" id="blankHeight" value="1080" min="200">
+      <button id="createBlank">Criar Canvas Transparente</button>
+    </div>
+  </fieldset>
 
-  <hr>
+  <fieldset>
+    <legend>Texto</legend>
+    <label for="portugueseText">Escreva o texto que deseja codificar:</label>
+    <textarea id="portugueseText" placeholder="Digite aqui..."></textarea><br>
 
-  <label>Escreva o texto que deseja codificar:</label><br>
-  <textarea id="portugueseText" placeholder="Digite aqui..."></textarea><br>
+    <label for="colorPicker">Cor:</label>
+    <input type="color" id="colorPicker" value="#ff0000">
 
-  <label>Cor:</label>
-  <input type="color" id="colorPicker" value="#ff0000">
+    <label for="fontSize">Tamanho:</label>
+    <input type="number" id="fontSize" value="36" min="10" max="300">
 
-  <label>Tamanho:</label>
-  <input type="number" id="fontSize" value="36" min="10" max="300">
+    <label for="rotationInput">Rotação (°):</label>
+    <input type="number" id="rotationInput" value="0" min="0" max="360"><br>
 
-  <label>Rotação (°):</label>
-  <input type="number" id="rotationInput" value="0" min="0" max="360"><br>
+    <button id="flipH">Espelhar Horizontal</button>
+    <button id="flipV">Espelhar Vertical</button>
+    <button id="clearText">Apagar Texto</button>
+  </fieldset>
 
-  <button id="flipH">Espelhar Horizontal</button>
-  <button id="flipV">Espelhar Vertical</button>
-  <button id="clearText">Apagar Texto</button>
+  <fieldset>
+    <legend>Zoom</legend>
+    <button id="zoomOut">Zoom -</button>
+    <button id="zoomIn">Zoom +</button>
+  </fieldset>
 
-  <br><br>
-  <button id="zoomOut">Zoom -</button>
-  <button id="zoomIn">Zoom +</button>
-
-  <hr>
-
-  <div class="exporter">
-    <label>Exportar (px):</label>
+  <fieldset>
+    <legend>Exportação</legend>
+    <label for="exportWidth">Largura (px):</label>
     <input type="number" id="exportWidth" value="3840" min="256">
+    <label for="exportHeight">Altura (px):</label>
     <input type="number" id="exportHeight" value="2160" min="256">
     <label class="checkbox">
       <input type="checkbox" id="exportTransparent">
       Sem fundo (transparente)
     </label>
     <button id="saveImage">Exportar</button>
-  </div>
+  </fieldset>
 </div>
 
 <div class="canvas-container">
