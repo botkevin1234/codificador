@@ -8,6 +8,10 @@
 </head>
 <body>
 
+<a href="https://linktr.ee/arrmarte" class="icon-link">
+    <img src="Icon_ana.jpg" alt="Ícone" class="icon">
+</a>
+
 <h2>Codificador🔒</h2>
 
 <div class="controls">
@@ -16,17 +20,31 @@
     <label>Escreva o texto que deseja codificar:</label><br>
     <textarea id="portugueseText" placeholder="Digite aqui..."></textarea><br>
 
-    <label>Cor:</label><input type="color" id="colorPicker" value="#ff0000">
-    <label>Tamanho:</label><input type="number" id="fontSize" value="30" min="10" max="100"><br>
+    <label>Cor:</label>
+    <input type="color" id="colorPicker" value="#ff0000">
 
-    <label>Rotação (°):</label><input type="number" id="rotationInput" value="0" min="0" max="360"><br>
+    <label>Tamanho:</label>
+    <input type="number" id="fontSize" value="30" min="10" max="100"><br>
+
+    <label>Rotação (°):</label>
+    <input type="number" id="rotationInput" value="0" min="0" max="360"><br>
+
     <button id="flipH">Espelhar Horizontal</button>
     <button id="flipV">Espelhar Vertical</button>
     <button id="clearText">Apagar Texto</button>
-    <button id="saveImage">Salvar Imagem</button>
+    <button id="saveImage">Salvar Imagem</button><br>
+
+    <label>Mover:</label>
+    <select id="moveMode">
+        <option value="text">Mover Texto</option>
+        <option value="image">Mover Imagem</option>
+    </select>
+
+    <button id="zoomIn">Zoom +</button>
+    <button id="zoomOut">Zoom -</button>
 </div>
 
-<canvas id="canvas" width="800" height="500"></canvas>
+<canvas id="canvas"></canvas>
 
 <script src="script.js"></script>
 </body>
