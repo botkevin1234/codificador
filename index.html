@@ -9,42 +9,69 @@
 <body>
 
 <a href="https://linktr.ee/arrmarte" class="icon-link">
-    <img src="Icon_ana.jpg" alt="Ícone" class="icon">
+  <img src="Icon_ana.jpg" alt="Ícone" class="icon">
 </a>
 
 <h2>Codificador🔒</h2>
 
 <div class="controls">
-    <input type="file" id="uploadImage" accept="image/*"><br>
+  <label>Modo:</label>
+  <select id="modeSelect">
+    <option value="upload" selected>Enviar Imagem</option>
+    <option value="blank">Imagem sem Fundo</option>
+  </select>
 
-    <label>Escreva o texto que deseja codificar:</label><br>
-    <textarea id="portugueseText" placeholder="Digite aqui..."></textarea><br>
+  <div id="uploadSection">
+    <input type="file" id="uploadImage" accept="image/*">
+  </div>
 
-    <label>Cor:</label>
-    <input type="color" id="colorPicker" value="#ff0000">
+  <div id="blankSection" style="display:none;">
+    <label>Largura:</label>
+    <input type="number" id="blankWidth" value="1920" min="200">
+    <label>Altura:</label>
+    <input type="number" id="blankHeight" value="1080" min="200">
+    <button id="createBlank">Criar Canvas Transparente</button>
+  </div>
 
-    <label>Tamanho:</label>
-    <input type="number" id="fontSize" value="30" min="10" max="100"><br>
+  <hr>
 
-    <label>Rotação (°):</label>
-    <input type="number" id="rotationInput" value="0" min="0" max="360"><br>
+  <label>Escreva o texto que deseja codificar:</label><br>
+  <textarea id="portugueseText" placeholder="Digite aqui..."></textarea><br>
 
-    <button id="flipH">Espelhar Horizontal</button>
-    <button id="flipV">Espelhar Vertical</button>
-    <button id="clearText">Apagar Texto</button>
-    <button id="saveImage">Salvar Imagem</button><br>
+  <label>Cor:</label>
+  <input type="color" id="colorPicker" value="#ff0000">
 
-    <label>Mover:</label>
-    <select id="moveMode">
-        <option value="text">Mover Texto</option>
-        <option value="image">Mover Imagem</option>
-    </select>
+  <label>Tamanho:</label>
+  <input type="number" id="fontSize" value="36" min="10" max="300">
 
-    <button id="zoomIn">Zoom +</button>
-    <button id="zoomOut">Zoom -</button>
+  <label>Rotação (°):</label>
+  <input type="number" id="rotationInput" value="0" min="0" max="360"><br>
+
+  <button id="flipH">Espelhar Horizontal</button>
+  <button id="flipV">Espelhar Vertical</button>
+  <button id="clearText">Apagar Texto</button>
+
+  <br><br>
+  <button id="zoomOut">Zoom -</button>
+  <button id="zoomIn">Zoom +</button>
+
+  <hr>
+
+  <div class="exporter">
+    <label>Exportar (px):</label>
+    <input type="number" id="exportWidth" value="3840" min="256">
+    <input type="number" id="exportHeight" value="2160" min="256">
+    <label class="checkbox">
+      <input type="checkbox" id="exportTransparent">
+      Sem fundo (transparente)
+    </label>
+    <button id="saveImage">Exportar</button>
+  </div>
 </div>
 
-<canvas id="canvas"></canvas>
+<div class="canvas-container">
+  <canvas id="canvas"></canvas>
+</div>
 
 <script src="script.js"></script>
 </body>
