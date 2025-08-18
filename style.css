@@ -64,7 +64,7 @@ canvas {
   border-radius: 6px;
   cursor: grab;
   background: transparent;
-  touch-action: none; /* melhora o arraste no celular */
+  touch-action: none; /* importante para arraste no celular */
 }
 
 .icon-link {
