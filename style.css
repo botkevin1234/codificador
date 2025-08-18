@@ -1,80 +1,86 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 20px;
-    background-image: url('fundo.jpeg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    color: hsl(0,0%,82%);
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+  background-image: url('fundo.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: hsl(0,0%,82%);
 }
 
-h2 {
-    margin-top: 0;
-}
+h2 { margin-top: 0; }
 
 .controls {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 15px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 10px;
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 15px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 10px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.15);
 }
 
-.controls label {
-    font-weight: bold;
-    display: inline-block;
-    margin: 8px 0 4px;
-}
+.controls label { font-weight: bold; margin: 0 6px; }
 
 .controls input, .controls button, .controls select, .controls textarea {
-    margin: 5px;
-    padding: 6px;
+  margin: 6px;
+  padding: 8px;
 }
 
 textarea {
-    width: 100%;
-    min-height: 80px;
-    resize: vertical;
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  color: #111;
 }
 
 button {
-    border-radius: 6px;
-    border: none;
-    background-color: #0077ff;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
+  border-radius: 6px;
+  border: none;
+  background-color: #0077ff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
 }
+button:hover { background-color: #005fcc; }
 
-button:hover {
-    background-color: #005fcc;
+.checkbox { font-weight: normal; }
+
+.canvas-container {
+  width: 100%;
+  overflow: auto;
+  text-align: center;
 }
 
 canvas {
-    display: block;
-    margin: 20px auto;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    cursor: grab;
-    background: transparent;
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+  margin: 20px auto;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: grab;
+  background: transparent;
+  touch-action: none; /* melhora o arraste no celular */
 }
 
 .icon-link {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 2px solid white;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.4);
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid white;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.4);
 }
 
 .icon-link img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
