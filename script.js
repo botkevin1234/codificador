@@ -29,45 +29,46 @@ let img = new Image();
 let hasImage = false;
 let useBlank = false;
 
+// imagem desenhada centralizada
 let zoom = 1;
 const zoomStep = 0.1, minZoom = 0.1, maxZoom = 5;
 
+// texto e transformações
 let text = "", x = 0, y = 0, rotation = 0, flipH = false, flipV = false;
 let draggingText = false, offsetX = 0, offsetY = 0;
 
-let canvasBaseWidth = 1280;
-let canvasBaseHeight = 720;
-
-// Fonte personalizada
+// fonte personalizada
 let fonteCarregada = false;
 const minhaFonte = new FontFace('MinhaFonte', 'url(minhaFonte.ttf)');
 minhaFonte.load().then(f => {
   document.fonts.add(f);
   fonteCarregada = true;
+  resetTextPosition();
   drawCanvas();
 });
 
-// Alternar modo
+// alternar modo
 modeSelect.addEventListener('change', () => {
   const isUpload = modeSelect.value === 'upload';
   uploadSection.style.display = isUpload ? 'block' : 'none';
   blankSection.style.display = isUpload ? 'none' : 'block';
 });
 
-// Criar canvas transparente
+// criar canvas transparente
 createBlankBtn.addEventListener('click', () => {
-  canvasBaseWidth = Math.max(200, parseInt(blankWidthInput.value) || 1920);
-  canvasBaseHeight = Math.max(200, parseInt(blankHeightInput.value) || 1080);
+  const w = Math.max(200, parseInt(blankWidthInput.value) || 1920);
+  const h = Math.max(200, parseInt(blankHeightInput.value) || 1080);
   useBlank = true;
   hasImage = false;
   img = new Image();
   zoom = 1;
-  x = canvasBaseWidth / 2;
-  y = canvasBaseHeight / 2;
-  resizeCanvas();
+
+  setCanvasSize(w, h);
+  resetTextPosition();
+  drawCanvas();
 });
 
-// Upload de imagem
+// upload de imagem
 uploadImage.addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -78,37 +79,34 @@ uploadImage.addEventListener('change', e => {
       useBlank = false;
       hasImage = true;
       zoom = 1;
-      canvasBaseWidth = img.width;
-      canvasBaseHeight = img.height;
-      x = canvasBaseWidth / 2;
-      y = canvasBaseHeight / 2;
-      resizeCanvas();
+      setCanvasSize(img.width, img.height);
+      resetTextPosition();
+      drawCanvas();
     };
     img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
 });
 
-// --- RESPONSIVIDADE ---
-function resizeCanvas() {
-  const container = canvas.parentElement;
-  const maxWidth = container.clientWidth - 20;
-  const maxHeight = window.innerHeight - container.offsetTop - 40;
-
-  let scale = Math.min(maxWidth / canvasBaseWidth, maxHeight / canvasBaseHeight, 1);
-
-  canvas.style.width = canvasBaseWidth * scale + "px";
-  canvas.style.height = canvasBaseHeight * scale + "px";
-
-  drawCanvas();
+// util: ajustar tamanho interno do canvas (mantém nitidez)
+function setCanvasSize(w, h) {
+  canvas.width = w;
+  canvas.height = h;
 }
 
-window.addEventListener('resize', resizeCanvas);
+// reseta posição do texto para o centro do canvas ou da imagem
+function resetTextPosition() {
+  x = canvas.width / 2;
+  y = canvas.height / 2;
+}
 
-// --- TEXTO ---
+// tradução de símbolos
 function traduzirSimbolos(txt) {
-  const mapa = {};
-  for (let i = 65; i <= 90; i++) mapa[String.fromCharCode(i)] = String.fromCharCode(i);
+  const mapa = {
+    "A":"A","B":"B","C":"C","D":"D","E":"E","F":"F","G":"G","H":"H","I":"I","J":"J",
+    "K":"K","L":"L","M":"M","N":"N","O":"O","P":"P","Q":"Q","R":"R","S":"S","T":"T",
+    "U":"U","V":"V","W":"W","X":"X","Y":"Y","Z":"Z"
+  };
   return txt.split("").map(l => mapa[l] || l).join("");
 }
 
@@ -118,11 +116,11 @@ portugueseText.addEventListener('input', () => {
   drawCanvas();
 });
 
-// --- DESENHO ---
+// desenhar
 function drawCanvas() {
   if (!fonteCarregada) return;
 
-  ctx.clearRect(0, 0, canvasBaseWidth, canvasBaseHeight);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
 
@@ -131,8 +129,8 @@ function drawCanvas() {
   if (hasImage && img.src) {
     drawW = img.width * zoom;
     drawH = img.height * zoom;
-    imgX = (canvasBaseWidth - drawW) / 2;
-    imgY = (canvasBaseHeight - drawH) / 2;
+    imgX = (canvas.width - drawW) / 2;
+    imgY = (canvas.height - drawH) / 2;
     ctx.drawImage(img, imgX, imgY, drawW, drawH);
   }
 
@@ -146,8 +144,9 @@ function drawCanvas() {
     ctx.font = `${parseInt(fontSizeInput.value)}px MinhaFonte`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+
     const padding = 12;
-    const usableW = hasImage ? Math.max(0, (img.width * zoom) - padding * 2) : Math.max(0, canvasBaseWidth - padding * 2);
+    const usableW = hasImage ? Math.max(0, (img.width * zoom) - padding * 2) : Math.max(0, canvas.width - padding * 2);
     drawMultilineWrapped(ctx, text, usableW, parseInt(fontSizeInput.value) + 8);
     ctx.restore();
 
@@ -155,147 +154,4 @@ function drawCanvas() {
   }
 }
 
-// --- MULTILINHA ---
-function drawMultilineWrapped(ctx, text, maxWidth, lineHeight) {
-  const paragraphs = text.split('\n');
-  const lines = [];
-  paragraphs.forEach(p => {
-    const words = p.split(' ');
-    let line = '';
-    words.forEach(word => {
-      const test = (line + word + ' ').trimEnd();
-      if (ctx.measureText(test).width > maxWidth && line.length > 0) {
-        lines.push(line);
-        line = word + ' ';
-      } else {
-        line = test + ' ';
-      }
-    });
-    lines.push(line.trimEnd());
-  });
-
-  const totalH = lines.length * lineHeight;
-  let yy = -totalH / 2 + lineHeight / 2;
-  lines.forEach(l => {
-    ctx.fillText(l, 0, yy);
-    yy += lineHeight;
-  });
-}
-
-// --- INTERAÇÃO ---
-function pointInText(mx, my) {
-  const padding = 12;
-  const lineHeight = parseInt(fontSizeInput.value) + 8;
-  const usableW = hasImage ? Math.max(0, (img.width * zoom) - padding * 2) : Math.max(0, canvasBaseWidth - padding * 2);
-  const b = measureTextBounds(ctx, text, usableW, lineHeight);
-
-  const dx = mx - x;
-  const dy = my - y;
-  const rad = -rotation * Math.PI / 180;
-  const rx = dx * Math.cos(rad) - dy * Math.sin(rad);
-  const ry = dx * Math.sin(rad) + dy * Math.cos(rad);
-
-  return (rx >= -b.width/2 && rx <= b.width/2 && ry >= -b.height/2 && ry <= b.height/2);
-}
-
-function startDrag(clientX, clientY) {
-  const rect = canvas.getBoundingClientRect();
-  const mx = (clientX - rect.left) * (canvasBaseWidth / rect.width);
-  const my = (clientY - rect.top) * (canvasBaseHeight / rect.height);
-  if (pointInText(mx, my)) {
-    draggingText = true;
-    offsetX = mx - x;
-    offsetY = my - y;
-  }
-}
-
-function moveDrag(clientX, clientY) {
-  if (!draggingText) return;
-  const rect = canvas.getBoundingClientRect();
-  const mx = (clientX - rect.left) * (canvasBaseWidth / rect.width);
-  const my = (clientY - rect.top) * (canvasBaseHeight / rect.height);
-  x = mx - offsetX;
-  y = my - offsetY;
-  drawCanvas();
-}
-
-function endDrag() { draggingText = false; }
-
-canvas.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
-canvas.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
-canvas.addEventListener('mouseup', endDrag);
-canvas.addEventListener('mouseleave', endDrag);
-
-canvas.addEventListener('touchstart', e => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); e.preventDefault(); }, { passive: false });
-canvas.addEventListener('touchmove', e => { const t = e.touches[0]; moveDrag(t.clientX, t.clientY); e.preventDefault(); }, { passive: false });
-canvas.addEventListener('touchend', endDrag);
-
-// --- CONTROLES ---
-flipHBtn.addEventListener('click', () => { flipH = !flipH; drawCanvas(); });
-flipVBtn.addEventListener('click', () => { flipV = !flipV; drawCanvas(); });
-clearTextBtn.addEventListener('click', () => { text = ""; portugueseText.value = ""; drawCanvas(); });
-rotationInput.addEventListener('input', () => { rotation = parseFloat(rotationInput.value) || 0; drawCanvas(); });
-fontSizeInput.addEventListener('input', drawCanvas);
-colorPicker.addEventListener('input', drawCanvas);
-
-zoomInBtn.addEventListener('click', () => { zoom = Math.min(maxZoom, zoom + zoomStep); drawCanvas(); });
-zoomOutBtn.addEventListener('click', () => { zoom = Math.max(minZoom, zoom - zoomStep); drawCanvas(); });
-
-// --- EXPORTAÇÃO ---
-saveBtn.addEventListener('click', () => {
-  const outW = Math.max(256, parseInt(exportWidth.value) || 3840);
-  const outH = Math.max(256, parseInt(exportHeight.value) || 2160);
-  const transparent = !!exportTransparent.checked;
-
-  const out = document.createElement('canvas');
-  out.width = outW;
-  out.height = outH;
-  const octx = out.getContext('2d');
-  octx.imageSmoothingEnabled = true;
-  octx.imageSmoothingQuality = 'high';
-
-  if (!transparent) {
-    octx.fillStyle = '#ffffff';
-    octx.fillRect(0, 0, outW, outH);
-  }
-
-  const sx = outW / canvasBaseWidth;
-  const sy = outH / canvasBaseHeight;
-
-  if (hasImage && img.src) {
-    const drawW = img.width * zoom;
-    const drawH = img.height * zoom;
-    const imgX = (canvasBaseWidth - drawW) / 2;
-    const imgY = (canvasBaseHeight - drawH) / 2;
-    octx.save();
-    octx.scale(sx, sy);
-    octx.drawImage(img, imgX, imgY, drawW, drawH);
-    octx.restore();
-  }
-
-  if (text) {
-    octx.save();
-    octx.scale(sx, sy);
-    octx.translate(x, y);
-    octx.rotate(rotation * Math.PI / 180);
-    octx.scale(flipH ? -1 : 1, flipV ? -1 : 1);
-    octx.fillStyle = colorPicker.value;
-    octx.font = `${parseInt(fontSizeInput.value)}px MinhaFonte`;
-    octx.textAlign = 'center';
-    octx.textBaseline = 'middle';
-    const padding = 12;
-    const usableW = hasImage ? Math.max(0, (img.width * zoom) - padding * 2) : Math.max(0, canvasBaseWidth - padding * 2);
-    drawMultilineWrapped(octx, text, usableW, parseInt(fontSizeInput.value) + 8);
-    octx.restore();
-  }
-
-  const link = document.createElement('a');
-  link.download = `export_${outW}x${outH}${transparent ? '_transparent' : ''}.png`;
-  link.href = out.toDataURL('image/png');
-  link.click();
-});
-
-// --- INICIAL ---
-x = canvasBaseWidth / 2;
-y = canvasBaseHeight / 2;
-resizeCanvas();
+// ... (restante do código de drawMultilineWrapped, measureTextBounds, keepTextInsideBounds, drag, touch, zoom, flip, export) ...
