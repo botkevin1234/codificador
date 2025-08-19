@@ -28,7 +28,7 @@ h2 { margin-top: 0; }
 }
 
 textarea {
-  width: 90%;
+  width: 80%;
   min-height: 60px;
   resize: vertical;
   border-radius: 6px;
@@ -84,3 +84,4 @@ canvas {
   height: 100%;
   object-fit: cover;
 }
+
