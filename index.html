@@ -1,85 +1,132 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tradutor para a linguagem da BAGI</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Codificador Linguagem de Shazeth</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<a href="https://linktr.ee/arrmarte" class="icon-link">
-  <img src="Icon_ana.jpg" alt="Ícone" class="icon">
-</a>
+  <!-- Ícone/link da artista -->
+  <a href="https://linktr.ee/arrmarte" class="icon-link">
+    <img src="Icon_ana.jpg" alt="Ícone" class="icon">
+  </a>
 
-<h2>Codificador🔒</h2>
+  <!-- Cartão central do codificador -->
+  <main class="codificador-card">
 
-<div class="controls">
-  <fieldset>
-    <legend>Modo</legend>
-    <label for="modeSelect">Selecione o modo:</label>
-    <select id="modeSelect">
-      <option value="upload" selected>Enviar Imagem</option>
-      <option value="blank">Imagem sem Fundo</option>
-    </select>
+    <h1 class="titulo-principal">Codificador Linguagem de Shazeth</h1>
 
-    <div id="uploadSection">
-      <label for="uploadImage">Enviar Imagem:</label>
-      <input type="file" id="uploadImage" accept="image/*">
+    <div class="controls">
+
+      <!-- MODO -->
+      <fieldset class="bloco">
+        <legend class="bloco-titulo">MODO</legend>
+
+        <label for="modeSelect" class="campo-label">Selecione o modo:</label>
+        <select id="modeSelect" class="input-campo">
+          <option value="upload" selected>Enviar Imagem</option>
+          <option value="blank">Imagem sem Fundo</option>
+        </select>
+
+        <div id="uploadSection">
+          <label for="uploadImage" class="campo-label">Enviar imagem:</label>
+          <input type="file" id="uploadImage" accept="image/*" class="input-campo">
+        </div>
+
+        <div id="blankSection" style="display:none;">
+          <div class="linha-campos">
+            <label class="campo-inline">
+              Largura:
+              <input type="number" id="blankWidth" value="1920" min="200" class="input-mini">
+            </label>
+            <label class="campo-inline">
+              Altura:
+              <input type="number" id="blankHeight" value="1080" min="200" class="input-mini">
+            </label>
+            <button id="createBlank" class="btn-acao">Criar Canvas Transparente</button>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- TEXTO -->
+      <fieldset class="bloco">
+        <legend class="bloco-titulo">TEXTO</legend>
+
+        <label for="portugueseText" class="campo-label">
+          Escreva o texto que deseja codificar:
+        </label>
+        <textarea id="portugueseText" class="input-campo input-textarea" placeholder="Digite aqui..."></textarea>
+
+        <div class="linha-campos">
+          <label class="campo-inline">
+            Cor:
+            <input type="color" id="colorPicker" value="#ff0000" class="input-color">
+          </label>
+
+          <label class="campo-inline">
+            Tamanho:
+            <input type="number" id="fontSize" value="15" min="10" max="300" class="input-mini">
+          </label>
+
+          <label class="campo-inline">
+            Rotação (°):
+            <input type="number" id="rotationInput" value="0" min="0" max="360" class="input-mini">
+          </label>
+        </div>
+
+        <div class="linha-botoes">
+          <button id="flipH" class="btn-acao">Espelhar Horiz.</button>
+          <button id="flipV" class="btn-acao">Espelhar Vert.</button>
+          <button id="clearText" class="btn-acao">Apagar Texto</button>
+        </div>
+      </fieldset>
+
+      <!-- ZOOM -->
+      <fieldset class="bloco">
+        <legend class="bloco-titulo">ZOOM</legend>
+        <div class="linha-botoes">
+          <button id="zoomOut" class="btn-acao">Zoom -</button>
+          <button id="zoomIn" class="btn-acao">Zoom +</button>
+        </div>
+      </fieldset>
+
+      <!-- EXPORTAÇÃO -->
+      <fieldset class="bloco">
+        <legend class="bloco-titulo">EXPORTAÇÃO</legend>
+
+        <div class="linha-campos">
+          <label class="campo-inline">
+            Largura (px):
+            <input type="number" id="exportWidth" value="3840" min="256" class="input-mini">
+          </label>
+          <label class="campo-inline">
+            Altura (px):
+            <input type="number" id="exportHeight" value="2160" min="256" class="input-mini">
+          </label>
+          <label class="campo-inline checkbox-linha">
+            <input type="checkbox" id="exportTransparent">
+            SEM FUNDO
+          </label>
+        </div>
+
+        <div class="linha-botoes">
+          <button id="saveImage" class="btn-acao btn-principal">Exportar</button>
+        </div>
+      </fieldset>
+
     </div>
 
-    <div id="blankSection" style="display:none;">
-      <label for="blankWidth">Largura:</label>
-      <input type="number" id="blankWidth" value="1920" min="200">
-      <label for="blankHeight">Altura:</label>
-      <input type="number" id="blankHeight" value="1080" min="200">
-      <button id="createBlank">Criar Canvas Transparente</button>
+    <!-- Quadro com moldura para o canvas -->
+    <div class="canvas-container">
+      <div class="frame-externo">
+        <canvas id="canvas"></canvas>
+      </div>
     </div>
-  </fieldset>
 
-  <fieldset>
-    <legend>Texto</legend>
-    <label for="portugueseText">Escreva o texto que deseja codificar:</label>
-    <textarea id="portugueseText" placeholder="Digite aqui..."></textarea><br>
+  </main>
 
-    <label for="colorPicker">Cor:</label>
-    <input type="color" id="colorPicker" value="#ff0000">
-
-    <label for="fontSize">Tamanho:</label>
-    <input type="number" id="fontSize" value="15" min="10" max="300">
-
-    <label for="rotationInput">Rotação (°):</label>
-    <input type="number" id="rotationInput" value="0" min="0" max="360"><br>
-
-    <button id="flipH">Espelhar Horizontal</button>
-    <button id="flipV">Espelhar Vertical</button>
-    <button id="clearText">Apagar Texto</button>
-  </fieldset>
-
-  <fieldset>
-    <legend>Zoom</legend>
-    <button id="zoomOut">Zoom -</button>
-    <button id="zoomIn">Zoom +</button>
-  </fieldset>
-
-  <fieldset>
-    <legend>Exportação</legend>
-    <label for="exportWidth">Largura (px):</label>
-    <input type="number" id="exportWidth" value="3840" min="256">
-    <label for="exportHeight">Altura (px):</label>
-    <input type="number" id="exportHeight" value="2160" min="256">
-    <label class="checkbox">
-      <input type="checkbox" id="exportTransparent">
-      Sem fundo (transparente)
-    </label>
-    <button id="saveImage">Exportar</button>
-  </fieldset>
-</div>
-
-<div class="canvas-container">
-  <canvas id="canvas"></canvas>
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
