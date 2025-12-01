@@ -9,7 +9,7 @@
   font-style: normal;
 }
 
-/* Classe só para o texto codificado (linguagem Shazeth) */
+/* Classe só para o texto codificado */
 .texto-codificado {
   font-family: 'MinhaFonteUI', sans-serif;
 }
@@ -27,12 +27,12 @@ body {
   text-align: center;
 
   background-image: url('fundo.jpeg');
-  background-size: cover;        /* mantém a imagem sem bordas pretas */
+  background-size: cover;        /* evita bordas pretas */
   background-position: center;
   background-repeat: no-repeat;
 }
 
-/* ========== LINK / ÍCONE DO TOPO ========== */
+/* ========== ÍCONE SUPERIOR ========== */
 .icon-link {
   position: fixed;
   top: 15px;
@@ -45,33 +45,35 @@ body {
   box-shadow: 0 4px 8px rgba(0,0,0,0.5);
   z-index: 10;
 }
-
 .icon-link img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* ========== CARD PRINCIPAL (AGORA MAIS TRANSPARENTE + VIDRO REAL) ========== */
+/* ========== CARD PRINCIPAL ========== */
 .codificador-card {
   max-width: 900px;
   margin: 40px auto;
   padding: 35px 24px 45px;
   position: relative;
 
-  background: rgba(10, 6, 2, 0.28);                /* + transparência */
-  backdrop-filter: blur(8px) brightness(1.1);      /* efeito VIDRO REAL */
+  background: rgba(10, 6, 2, 0.28);
+  backdrop-filter: blur(8px) brightness(1.1);
   -webkit-backdrop-filter: blur(8px) brightness(1.1);
 
   border: 1px solid rgba(200, 170, 120, 0.25);
-  border-radius: 8px;
+  border-radius: 16px;
+
+  /* impede qualquer coisa de sair para fora do card */
+  overflow: hidden;
+
   animation: auraCard 6s ease-in-out infinite;
 }
 
-/* AURA SUAVE AO REDOR DO CARD */
 @keyframes auraCard {
-  0% { box-shadow: 0 0 25px rgba(0, 0, 0, 0.8); }
-  50% { box-shadow: 0 0 40px rgba(170, 141, 96, 0.6); }
+  0%   { box-shadow: 0 0 25px rgba(0, 0, 0, 0.8); }
+  50%  { box-shadow: 0 0 40px rgba(170, 141, 96, 0.6); }
   100% { box-shadow: 0 0 25px rgba(0, 0, 0, 0.8); }
 }
 
@@ -81,60 +83,49 @@ body {
   margin-bottom: 24px;
   font-size: 32px;
   letter-spacing: 2px;
-  font-weight: normal;
   font-family: 'Serif Display', serif;
   color: #f5e1b8;
-
   text-shadow:
     0 0 4px rgba(255, 210, 140, 0.8),
     0 0 8px rgba(255, 210, 140, 0.4);
-
   animation: brilhoMagico 3.8s ease-in-out infinite;
 }
 
 @keyframes brilhoMagico {
   0% {
     text-shadow:
-      0 0 4px rgba(255, 210, 140, 0.7),
-      0 0 12px rgba(255, 210, 140, 0.4);
+      0 0 4px rgba(255,210,140,0.7),
+      0 0 12px rgba(255,210,140,0.4);
   }
   50% {
     text-shadow:
-      0 0 6px rgba(255, 230, 180, 1),
-      0 0 18px rgba(255, 230, 180, 0.8);
+      0 0 6px rgba(255,230,180,1),
+      0 0 18px rgba(255,230,180,0.8);
   }
   100% {
     text-shadow:
-      0 0 4px rgba(255, 210, 140, 0.7),
-      0 0 12px rgba(255, 210, 140, 0.4);
+      0 0 4px rgba(255,210,140,0.7),
+      0 0 12px rgba(255,210,140,0.4);
   }
 }
 
 .titulo-principal:hover {
   color: #ffedc9;
   text-shadow:
-    0 0 6px rgba(255, 250, 220, 1),
-    0 0 20px rgba(255, 240, 200, 1);
+    0 0 6px rgba(255,250,220,1),
+    0 0 20px rgba(255,240,200,1);
   transition: 0.3s ease-in-out;
 }
 
-/* ========== FORMULÁRIO / CONTROLES ========== */
+/* ========== FORMULÁRIOS ========== */
 .controls {
   margin: 0 auto 24px;
   max-width: 820px;
 }
-
 .bloco {
   border: none;
   margin: 0 0 18px;
   padding: 12px 10px 16px;
-}
-
-.bloco-titulo {
-  font-size: 12px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
 }
 
 .campo-label {
@@ -142,6 +133,12 @@ body {
   text-align: left;
   font-size: 13px;
   margin: 6px 0;
+}
+
+.campo-inline {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
 }
 
 .input-campo,
@@ -158,45 +155,66 @@ input[type="file"] {
   font-family: inherit;
 }
 
-.input-textarea { min-height: 110px; resize: vertical; }
-.input-mini { width: 120px; }
+.input-textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.input-mini {
+  width: 120px;
+}
+
 .input-color {
-  width: 60px; height: 32px; padding: 0;
-  border-radius: 8px; border: 1px solid #c8aa78;
+  width: 60px;
+  height: 32px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid #c8aa78;
 }
 
 .linha-campos,
 .linha-botoes {
-  display: flex; flex-wrap: wrap;
-  justify-content: center; align-items: center;
-  gap: 10px; margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .checkbox-linha {
-  display: flex; align-items: center;
-  gap: 6px; font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
 }
 
-/* ========== BOTÕES (#aa8d60) + ANIMAÇÃO NO EXPORTAR ========== */
+/* ========== BOTÕES ========== */
 .btn-acao {
   min-width: 150px;
   padding: 8px 18px;
   border-radius: 20px;
   font-weight: 600;
   cursor: pointer;
+
   background: linear-gradient(#cda878, #aa8d60);
   border: 1px solid #8e7450;
   color: #2a1c10;
+
   box-shadow: 0 3px 0 #6b573c;
   transition: transform 0.1s ease, filter 0.15s, box-shadow 0.1s ease;
 }
 
-.btn-acao:hover { filter: brightness(1.05); }
+.btn-acao:hover {
+  filter: brightness(1.05);
+}
+
 .btn-acao:active {
   transform: translateY(2px);
   box-shadow: 0 1px 0 #6b573c;
 }
 
+/* Botão principal (Exportar) com energia */
 .btn-principal {
   position: relative;
   overflow: hidden;
@@ -204,26 +222,42 @@ input[type="file"] {
 }
 
 @keyframes pulsoBotao {
-  0% { box-shadow: 0 0 8px rgba(170, 141, 96, 0.4); transform: scale(1); }
-  50% { box-shadow: 0 0 16px rgba(170, 141, 96, 0.9); transform: scale(1.03); }
-  100% { box-shadow: 0 0 8px rgba(170, 141, 96, 0.4); transform: scale(1); }
+  0% {
+    box-shadow: 0 0 8px rgba(170,141,96,0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(170,141,96,0.9);
+    transform: scale(1.03);
+  }
+  100% {
+    box-shadow: 0 0 8px rgba(170,141,96,0.4);
+    transform: scale(1);
+  }
 }
 
-/* ========== CANVAS + MOLDURA ========== */
-.canvas-container { width: 100%; margin-top: 18px; }
+/* ========== CANVAS + MOLDURA (AJUSTADO) ========== */
+.canvas-container {
+  width: 100%;
+  margin-top: 18px;
+}
 
 .frame-externo {
   margin: 0 auto;
   max-width: 100%;
-  padding: 30px;
+  padding: 26px;         /* espaço interno */
   position: relative;
+
+  border-radius: 16px;   /* segue o card */
+  overflow: hidden;      /* corta qualquer vazamento da moldura */
 }
 
+/* Moldura recuada alguns pixels pra não encostar no limite */
 .frame-externo::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background: url('moldura.png') center/100% 100% no-repeat;
+  inset: 6px;  /* <<< recua a moldura para dentro */
+  background: url('moldura.png') center/contain no-repeat;
   pointer-events: none;
   z-index: 0;
 }
@@ -234,7 +268,7 @@ canvas {
   max-width: 100%;
   height: auto;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0,0,0,0.35);
   cursor: grab;
   touch-action: none;
   position: relative;
@@ -248,9 +282,16 @@ canvas {
     margin: 20px 8px;
   }
 
-  .input-mini { width: 100px; }
-  .btn-acao { min-width: 130px; padding-inline: 12px; }
-  .frame-externo { padding: 20px; }
+  .input-mini {
+    width: 100px;
+  }
+
+  .btn-acao {
+    min-width: 130px;
+    padding-inline: 12px;
+  }
+
+  .frame-externo {
+    padding: 20px;
+  }
 }
-
-
