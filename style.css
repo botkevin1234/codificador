@@ -26,7 +26,7 @@ body {
   color: #f3e7d0;
   text-align: center;
 
-  background-image: url('Fundo.jpeg');
+  background-image: url('fundo.jpeg');
   background-size: cover;        /* mantém a imagem sem bordas pretas */
   background-position: center;
   background-repeat: no-repeat;
@@ -252,4 +252,5 @@ canvas {
   .btn-acao { min-width: 130px; padding-inline: 12px; }
   .frame-externo { padding: 20px; }
 }
+
 
